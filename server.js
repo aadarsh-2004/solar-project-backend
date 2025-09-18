@@ -8,9 +8,12 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.get("/", (req, res) => {
+  res.status(200).send("Server is running!");
+});
 
 app.post("/api/send-inquiry", async (req, res) => {
-  const { name, phone, city,message,email} = req.body;
+  const { name, phone, city, message, email } = req.body;
 
   if (!phone) {
     return res.status(400).json({ error: "Phone and City are required" });
@@ -26,10 +29,10 @@ app.post("/api/send-inquiry", async (req, res) => {
     });
 
     await transporter.sendMail({
-  from: `"Solar Website" <${process.env.EMAIL_USER}>`,
-  to: process.env.EMAIL_TO,
-  subject: `Solar Inquiry from Website: - ${name || "New Lead"}`,
-  html: `
+      from: `"Solar Website" <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_TO,
+      subject: `Solar Inquiry from Website: - ${name || "New Lead"}`,
+      html: `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f9f9f9;">
       <div style="text-align: center; border-bottom: 2px solid #ff9900; padding-bottom: 10px; margin-bottom: 20px;">
         <h2 style="color: #ff9900; margin: 0; font-size: 24px;">✨ New Solar Consultation Request ✨</h2>
@@ -41,7 +44,9 @@ app.post("/api/send-inquiry", async (req, res) => {
       <div style="background-color: #ffffff; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0;">
         <h3 style="color: #000; font-size: 20px; margin: 0 0 10px 0;">Customer Information:</h3>
         <ul style="list-style-type: none; padding: 0; margin: 0;">
-          <li style="margin-bottom: 8px;"><strong><span style="color: #555;">👤 Name:</span></strong> ${name || "N/A"}</li>
+          <li style="margin-bottom: 8px;"><strong><span style="color: #555;">👤 Name:</span></strong> ${
+            name || "N/A"
+          }</li>
           <li style="margin-bottom: 8px;"><strong><span style="color: #555;">📞 Phone:</span></strong> <a href="tel:${phone}" style="color: #ff9900; text-decoration: none;">${phone}</a></li>
           <li style="margin-bottom: 8px;"><strong><span style="color: #555;">📍 City:</span></strong> ${city} </li>
           <li style="margin-bottom: 8px;"><strong><span style="color: #555;">👤 Email:</span></strong> ${email} </li>
@@ -56,7 +61,7 @@ app.post("/api/send-inquiry", async (req, res) => {
       </div>
     </div>
   `,
-});
+    });
 
     res.status(200).json({ message: "Inquiry sent successfully" });
   } catch (err) {
